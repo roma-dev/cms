@@ -1,7 +1,7 @@
 <?php
 // определяем корневую директорию проекта
-defined('ROOT') or define('ROOT', __DIR__);
+defined('ROOTDIR') or define('ROOTDIR', __DIR__);
 // директория приложения
-defined('APPDIR') or define('APPDIR', ROOT . '/app');
+defined('APPDIR') or define('APPDIR', ROOTDIR . '/app');
 // директория фраемворка
-defined('FRAEMWORKDIR') or define('FRAEMWORKDIR', ROOT . '/vendor/fraemwork');
+defined('FRAEMWORKDIR') or define('FRAEMWORKDIR', ROOTDIR . '/vendor/fraemwork');
