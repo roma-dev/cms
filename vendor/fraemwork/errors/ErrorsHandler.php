@@ -129,10 +129,26 @@ class ErrorsHandler
 		
 	}
 
-		public function renderError($errno, $errstr, $errfile, $errline, $code = 500)
+	/**
+	 * Метод отображения ошибки
+	 * 
+	 * @param type $errno Тип ошибки
+	 * @param type $errstr Сообщение ошибки
+	 * @param type $errfile Файл в котором была совершена ошибка
+	 * @param type $errline Строка на которой была совершена ошибка
+	 * @param type $code Код ответа сервера
+	 */
+	
+	public function renderError($errno, $errstr, $errfile, $errline, $code = 500)
 	{
+		// при фатальной ошибке переменная $code содержит булевое значение true
+		$code = is_bool($code) ? 500 : $code;
+		
 		// отправляем заголовок кода ответа сервера
 		http_response_code($code);
+		
+		// записываем сообщение об ошибке в логи
+		$this->loggerError($errno, $errstr, $errfile, $errline, $code);
 		
 		if(DEBUG)
 		{
@@ -161,6 +177,48 @@ class ErrorsHandler
 			}
 			
 		}
+		
+	}
+	
+	/**
+	 * Метод сохраняющий сообщения об ошибках в логах
+	 * 
+	 */
+	
+	public function loggerError($errno, $errstr, $errfile, $errline, $code = 500)
+	{
+		$userAgent	= isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT']	: 'UNDERFINED';
+		$refferer	= isset($_SERVER['HTTP_REFERER'])	 ? $_SERVER['HTTP_REFERER']		: 'UNDERFINED';
+		$requestUri = isset($_SERVER['REQUEST_URI'])	 ? $_SERVER['REQUEST_URI']		: 'UNDERFINED';
+		$dateError	= date('Y-m-d H:i:s');
+		
+		switch ($code)
+		{
+			case 403;
+				$logsFile = APPDIR . '/logs/forbbiden.log';
+			break;
+			case 404;
+				$logsFile = APPDIR . '/logs/notfound.log';
+			break;
+			default:
+				$logsFile = APPDIR . '/logs/errors.log';
+		}
+		
+		// составляем текст лога
+		$textError = 
+			"[DATE] ............ " . $dateError . "\n" .
+			"[USER] ............ " . $userAgent . "\n" .
+			"[REFERER] ......... " . $refferer . "\n" .
+			"[REQUEST] ......... " . $requestUri . "\n" .
+			"[STATUS CODE] ..... " . $code . "\n" .
+			"[ERROR TYPE] ...... " . $this->errors[$errno] . "\n" .
+			"[ERROR MESSAGE] ... " . $errstr . "\n" .
+			"[ERROR FILE] ...... " . $errfile . "\n" .
+			"[ERROR LINE] ...... " . $errline . "\n" .
+			"______________________________________________________________________\n\n";
+		
+		// записываем лог в файл
+		error_log($textError, 3, $logsFile);
 		
 	}
 	
