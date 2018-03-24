@@ -164,6 +164,7 @@ class ErrorsHandler
 
 	public function exceptionHandler($exception)
 	{
+		//var_dump($exception->getCode());die;
 		$this->renderError(
 				'EXCEPTION', 
 				$exception->getMessage(), 
@@ -187,7 +188,9 @@ class ErrorsHandler
 	public function renderError($errno, $errstr, $errfile, $errline, $code = 500)
 	{
 		// при фатальной ошибке переменная $code содержит булевое значение true
-		$code = is_bool($code) ? 500 : $code;
+		// а при исключении PPOException содержит строковое значение
+		// поэтому нам нужно привести значение к числовому типу
+		$code = (int) !is_numeric($code) ? 500 : $code;
 		
 		// отправляем заголовок кода ответа сервера
 		http_response_code($code);
