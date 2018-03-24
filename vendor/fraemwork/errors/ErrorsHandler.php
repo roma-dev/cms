@@ -10,9 +10,37 @@ namespace fraemwork\errors;
 class ErrorsHandler 
 {
 	/**
+	 *
+	 * @var type ErrorsHandler
+	 */
+	
+	private static $handler;
+	
+	/**
+	 * @var type boolean
+	 */
+	
+	private $logs;
+
+	/**
+	 *
+	 * @var type array
+	 */
+	
+	private $logFiles;
+
+	/**
+	 *
+	 * @var type array
+	 */
+	
+	private $errorsView;
+
+	/**
 	 * 
 	 * @var type array erros type
 	 */
+	
 	private $errors = 
 		[
 			E_ERROR				=> 'E_ERROR',
@@ -33,32 +61,48 @@ class ErrorsHandler
 			'EXCEPTION'			=> 'EXCEPTION',
 		];
 	
+	/**
+	 * Метод singleton
+	 * 
+	 * @param type $config array settings
+	 * @return type ErrorsHandler
+	 */
 	
-	public function __construct() 
+	static function handler($config)
 	{
-		if(DEBUG)
+		if (null === self::$handler)
 		{
-			error_reporting(-1);
-			ini_set('display_errors', 'On');
+			self::$handler				= new self();
+			self::$handler->logs		= $config['logs'];
+			self::$handler->logFiles	= $config['logFiles'];
+			self::$handler->errorsView	= $config['errorsView'];
 			
-		}else
-		{
-			error_reporting(0);
-			ini_set('display_errors', 'Off');
+			if(DEBUG)
+			{
+				error_reporting(-1);
+				ini_set('display_errors', 'On');
+
+			}else
+			{
+				error_reporting(0);
+				ini_set('display_errors', 'Off');
+			}
+
+			// включаем буферизацию вывода. 
+			// Это необходимо, чтоб перехватить вывод фатальной ошибке в браузер
+			ob_start();
+
+			// устанавливаем общий обработчик ошибок
+			set_error_handler([self::$handler, 'errorHandler']);
+
+			// устанавливаем обработчик фатальных ошибок
+			register_shutdown_function([self::$handler, 'fatalErrorHandler']);
+
+			// устанавливаем обработчик исключений
+			set_exception_handler([self::$handler, 'exceptionHandler']);
+	
 		}
-		
-		// включаем буферизацию вывода. 
-		// Это необходимо, чтоб перехватить вывод фатальной ошибке в браузер
-		ob_start();
-		
-		// устанавливаем общий обработчик ошибок
-		set_error_handler([$this, 'errorHandler']);
-		
-		// устанавливаем обработчик фатальных ошибок
-		register_shutdown_function([$this, 'fatalErrorHandler']);
-		
-		// устанавливаем обработчик исключений
-		set_exception_handler([$this, 'exceptionHandler']);
+		return self::$handler;
 	}
 	
 	
@@ -76,7 +120,6 @@ class ErrorsHandler
 	{
 		// выводим вид ошибки в браузер
 		$this->renderError($errno, $errstr, $errfile, $errline);
-		
 		
 		// если данная фукнция вернет false, 
 		// то управление передасться дальше и случится вывод ошибки в браузер
@@ -149,8 +192,11 @@ class ErrorsHandler
 		// отправляем заголовок кода ответа сервера
 		http_response_code($code);
 		
-		// записываем сообщение об ошибке в логи
-		$this->loggerError($errno, $errstr, $errfile, $errline, $code);
+		if($this->logs) // если логирование включено
+		{
+			// записываем сообщение об ошибке в логи
+			$this->loggerError($errno, $errstr, $errfile, $errline, $code);	
+		}
 		
 		if(DEBUG)
 		{
@@ -163,19 +209,19 @@ class ErrorsHandler
 			switch ($code)
 			{
 					case 403: // Доступ запрещен
-						require APPDIR . '/views/errors/e403.php';
+						require APPDIR . $this->errorsView['403'];
 					break;
 				
 					case 404: // Страницы не существует
-						require APPDIR . '/views/errors/e404.php';
+						require APPDIR . $this->errorsView['404'];
 					break;
 				
 					case 503; // Сайт недоступен
-						require APPDIR . '/views/errors/e503.php';
+						require APPDIR . $this->errorsView['503'];
 					break;
 				
 					default: // Внутренняя ошибка сервера
-						require APPDIR . '/views/errors/e500.php';
+						require APPDIR . $this->errorsView['500'];
 			}
 			
 		}
@@ -197,13 +243,13 @@ class ErrorsHandler
 		switch ($code)
 		{
 			case 403;
-				$logsFile = APPDIR . '/logs/forbbiden.log';
+				$logsFile = APPDIR . $this->logFiles['403'];
 			break;
 			case 404;
-				$logsFile = APPDIR . '/logs/notfound.log';
+				$logsFile = APPDIR . $this->logFiles['404'];
 			break;
 			default:
-				$logsFile = APPDIR . '/logs/errors.log';
+				$logsFile = APPDIR . $this->logFiles['500'];
 		}
 		
 		// составляем текст лога
