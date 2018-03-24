@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="/public/favicon.ico" type="image/x-icon">
     <title>Ошибка</title>
 	<link rel="stylesheet" type="text/css" href="/public/css/bootstrap.min.css">
 	<style>
