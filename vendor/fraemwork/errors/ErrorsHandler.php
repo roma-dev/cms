@@ -30,6 +30,7 @@ class ErrorsHandler
 			E_RECOVERABLE_ERROR => 'E_RECOVERABLE_ERROR',
 			E_DEPRECATED		=> 'E_DEPRECATED',
 			E_USER_DEPRECATED	=> 'E_USER_DEPRECATED',
+			'EXCEPTION'			=> 'EXCEPTION',
 		];
 	
 	
@@ -44,8 +45,18 @@ class ErrorsHandler
 			error_reporting(0);
 		}
 		
+		// включаем буферизацию вывода. 
+		// Это необходимо, чтоб перехватить вывод фатальной ошибке в браузер
+		ob_start();
+		
 		// устанавливаем общий обработчик ошибок
 		set_error_handler([$this, 'errorHandler']);
+		
+		// устанавливаем обработчик фатальных ошибок
+		register_shutdown_function([$this, 'fatalErrorHandler']);
+		
+		// устанавливаем обработчик исключений
+		set_exception_handler([$this, 'exceptionHandler']);
 	}
 	
 	
@@ -71,8 +82,54 @@ class ErrorsHandler
 		return true;
 	}
 	
+	/**
+	 * Метод отлавливающий фатальные ошибки
+	 * 
+	 */
 	
-	public function renderError($errno, $errstr, $errfile, $errline, $code = 500)
+	public function fatalErrorHandler()
+	{
+		// получаем последнюю совершенную ошибку
+		$lastError = error_get_last();
+		
+		// если была совершена ошибка и тип этой ошибки совпадает с перечисленными в условии
+		if( !empty($lastError) AND $lastError['type'] & ( E_ERROR | E_PARSE | E_COMPILE_ERROR | E_CORE_ERROR) )
+		{
+			// очищаем буфер обмена в котором находится информация о фатальной ошибке
+			ob_end_clean();
+			
+			// рендерим страницу ошибки
+			$this->renderError(
+					$lastError['type'], 
+					$lastError['message'], 
+					$lastError['file'], 
+					$lastError['line']
+				);
+			
+		}
+		else
+		{
+			// если ошибка не фатальна
+			// или если скрипт был завершен без ошибки то выводим содержимое буфера в браузер
+			ob_end_flush();
+		}
+		
+	}
+
+
+	public function exceptionHandler($exception)
+	{
+		$this->renderError(
+				'EXCEPTION', 
+				$exception->getMessage(), 
+				$exception->getFile(), 
+				$exception->getLine(), 
+				!$exception->getCode() ?: $exception->getCode()
+			);
+		
+	}
+
+		public function renderError($errno, $errstr, $errfile, $errline, $code = 500)
 	{
 		// отправляем заголовок кода ответа сервера
 		http_response_code($code);
