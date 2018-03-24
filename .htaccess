@@ -7,7 +7,8 @@ RewriteRule ^public/css/(.*)$ app/public/css/$1 [L]
 RewriteRule ^public/js/(.*)$ app/public/js/$1 [L]
 RewriteRule ^public/fonts/(.*)$ app/public/fonts/$1 [L]
 RewriteRule ^public/favicon.ico$ app/public/favicon.ico [L]
+RewriteRule (.*) /app/$1
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php$1 [L,QSA]
+RewriteRule . app/index.php
