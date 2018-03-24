@@ -39,10 +39,12 @@ class ErrorsHandler
 		if(DEBUG)
 		{
 			error_reporting(-1);
+			ini_set('display_errors', 'On');
 			
 		}else
 		{
 			error_reporting(0);
+			ini_set('display_errors', 'Off');
 		}
 		
 		// включаем буферизацию вывода. 
