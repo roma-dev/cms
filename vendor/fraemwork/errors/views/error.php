@@ -24,7 +24,7 @@
 		
 </head>
 <body>
-
+	
 	<div class="container">
 		<div class="bs-callout bs-callout-danger">
 			<h3 class="text-danger">ПРОИЗОШЛА ОШИБКА: <?=$this->errors[$errno]?></h3>
