@@ -11,4 +11,4 @@ RewriteRule (.*) /app/$1
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . app/index.php
+RewriteRule . app/index.php [L,QSA]

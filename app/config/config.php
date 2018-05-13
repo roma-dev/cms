@@ -41,5 +41,10 @@ return [
 		'core' => '/vendor2/',
 		'libs' => '/vendor2/',
 	],
+	'routes' => 
+	[
+		'/' => ['controller' => 'main', 'action' => 'index'],
+		'/contacts' => ['controller' => 'main', 'action' => 'contacts'],
+	],
 	
 ];
