@@ -20,4 +20,26 @@ return [
 		]
 	],
 	
+	'db' => 
+	[
+		'driver'	=> 'mysql',
+		'host'		=> '127.0.0.1',
+		'dbname'	=> 'pdotest',
+		'user'		=> 'root',
+		'password'	=> '123456',
+		'charset'	=> 'utf8',
+		'options'	=> 
+		[
+			PDO::ATTR_PERSISTENT	=> false, // отключаем сохранение постоянного соединения
+			PDO::ATTR_ERRMODE		=> PDO::ERRMODE_EXCEPTION, // включаем режим при котором PDO будет выбрасывать все исключения
+		],
+	],
+	
+	'autoloadListFolder' => 
+	[
+		'app' => '/',
+		'core' => '/vendor2/',
+		'libs' => '/vendor2/',
+	],
+	
 ];

@@ -1,6 +1,6 @@
 <?php
 
-namespace fraemwork\errors;
+namespace core\errors;
 
 /**
  * Данный класс реализовывает перехват исключений и ошибок
@@ -9,38 +9,19 @@ namespace fraemwork\errors;
 
 class ErrorsHandler 
 {
-	/**
-	 *
-	 * @var type ErrorsHandler
-	 */
-	
+	/** @var type ErrorsHandler */
 	private static $handler;
 	
-	/**
-	 * @var type boolean
-	 */
-	
+	/** @var type boolean */
 	private $logs;
 
-	/**
-	 *
-	 * @var type array
-	 */
-	
+	/** @var type array */
 	private $logFiles;
 
-	/**
-	 *
-	 * @var type array
-	 */
-	
+	/** @var type array */
 	private $errorsView;
 
-	/**
-	 * 
-	 * @var type array erros type
-	 */
-	
+	/** @var type array erros type */
 	private $errors = 
 		[
 			E_ERROR				=> 'E_ERROR',
@@ -68,22 +49,19 @@ class ErrorsHandler
 	 * @return type ErrorsHandler
 	 */
 	
-	static function handler($config)
-	{
-		if (null === self::$handler)
-		{
+	static function register($config){
+		
+		if (null === self::$handler) {
 			self::$handler				= new self();
 			self::$handler->logs		= $config['logs'];
 			self::$handler->logFiles	= $config['logFiles'];
 			self::$handler->errorsView	= $config['errorsView'];
 			
-			if(DEBUG)
-			{
+			if (DEBUG) {
 				error_reporting(-1);
 				ini_set('display_errors', 'On');
 
-			}else
-			{
+			} else {
 				error_reporting(0);
 				ini_set('display_errors', 'Off');
 			}
@@ -116,8 +94,7 @@ class ErrorsHandler
 	 * @return boolean true
 	 */
 	
-	public function errorHandler($errno, $errstr, $errfile, $errline)
-	{
+	public function errorHandler($errno, $errstr, $errfile, $errline){
 		// выводим вид ошибки в браузер
 		$this->renderError($errno, $errstr, $errfile, $errline);
 		
@@ -132,14 +109,12 @@ class ErrorsHandler
 	 * 
 	 */
 	
-	public function fatalErrorHandler()
-	{
+	public function fatalErrorHandler() {
 		// получаем последнюю совершенную ошибку
 		$lastError = error_get_last();
 		
 		// если была совершена ошибка и тип этой ошибки совпадает с перечисленными в условии
-		if( !empty($lastError) AND $lastError['type'] & ( E_ERROR | E_PARSE | E_COMPILE_ERROR | E_CORE_ERROR) )
-		{
+		if ( !empty($lastError) AND $lastError['type'] & ( E_ERROR | E_PARSE | E_COMPILE_ERROR | E_CORE_ERROR) ) {
 			// очищаем буфер обмена в котором находится информация о фатальной ошибке
 			ob_end_clean();
 			
@@ -151,9 +126,7 @@ class ErrorsHandler
 					$lastError['line']
 				);
 			
-		}
-		else
-		{
+		} else {
 			// если ошибка не фатальна
 			// или если скрипт был завершен без ошибки то выводим содержимое буфера в браузер
 			ob_end_flush();
@@ -161,10 +134,13 @@ class ErrorsHandler
 		
 	}
 
-
-	public function exceptionHandler($exception)
-	{
-		//var_dump($exception->getCode());die;
+	/**
+	 * Обработчик исключений
+	 * 
+	 * @param type $exception
+	 */
+	public function exceptionHandler($exception){
+		
 		$this->renderError(
 				'EXCEPTION', 
 				$exception->getMessage(), 
@@ -172,7 +148,6 @@ class ErrorsHandler
 				$exception->getLine(), 
 				!$exception->getCode() ?: $exception->getCode()
 			);
-		
 	}
 
 	/**
@@ -185,8 +160,7 @@ class ErrorsHandler
 	 * @param type $code Код ответа сервера
 	 */
 	
-	public function renderError($errno, $errstr, $errfile, $errline, $code = 500)
-	{
+	public function renderError($errno, $errstr, $errfile, $errline, $code = 500){
 		// при фатальной ошибке переменная $code содержит булевое значение true
 		// а при исключении PPOException содержит строковое значение
 		// поэтому нам нужно привести значение к числовому типу
@@ -195,22 +169,18 @@ class ErrorsHandler
 		// отправляем заголовок кода ответа сервера
 		http_response_code($code);
 		
-		if($this->logs) // если логирование включено
-		{
+		// если логирование включено
+		if ($this->logs) {
 			// записываем сообщение об ошибке в логи
 			$this->loggerError($errno, $errstr, $errfile, $errline, $code);	
 		}
 		
-		if(DEBUG)
-		{
+		if (DEBUG) {
 			// вид для разработчика - для отладки в режиме разработки
 			require 'views/error.php';
-		}
-		else
-		{
+		} else {
 			// виды для показа пользователю
-			switch ($code)
-			{
+			switch ($code) {
 					case 403: // Доступ запрещен
 						require APPDIR . $this->errorsView['403'];
 					break;
@@ -220,10 +190,12 @@ class ErrorsHandler
 					break;
 				
 					case 503; // Сайт недоступен
+						$errstr = 'Сайт временно недоступен';
 						require APPDIR . $this->errorsView['503'];
 					break;
 				
 					default: // Внутренняя ошибка сервера
+						$errstr = 'Внутренняя ошибка сервера';
 						require APPDIR . $this->errorsView['500'];
 			}
 			
@@ -236,15 +208,23 @@ class ErrorsHandler
 	 * 
 	 */
 	
-	public function loggerError($errno, $errstr, $errfile, $errline, $code = 500)
-	{
+	public function loggerError($errno, $errstr, $errfile, $errline, $code = 500){
 		$userAgent	= isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT']	: 'UNDERFINED';
 		$refferer	= isset($_SERVER['HTTP_REFERER'])	 ? $_SERVER['HTTP_REFERER']		: 'UNDERFINED';
 		$requestUri = isset($_SERVER['REQUEST_URI'])	 ? $_SERVER['REQUEST_URI']		: 'UNDERFINED';
 		$dateError	= date('Y-m-d H:i:s');
+		// определяем ip с которого был совершен запрос
+		if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+			$ip = $_SERVER['HTTP_CLIENT_IP'];
+		} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+			$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+		} elseif (!empty($_SERVER['REMOTE_ADDR'])) {
+			$ip = $_SERVER['REMOTE_ADDR'];
+		} else {
+			$ip = 'UNDERFINED';
+		}
 		
-		switch ($code)
-		{
+		switch ($code) {
 			case 403;
 				$logsFile = APPDIR . $this->logFiles['403'];
 			break;
@@ -255,10 +235,14 @@ class ErrorsHandler
 				$logsFile = APPDIR . $this->logFiles['500'];
 		}
 		
+		
+		
+		
 		// составляем текст лога
 		$textError = 
 			"[DATE] ............ " . $dateError . "\n" .
 			"[USER] ............ " . $userAgent . "\n" .
+			"[IP] .............. " . $ip . "\n" .
 			"[REFERER] ......... " . $refferer . "\n" .
 			"[REQUEST] ......... " . $requestUri . "\n" .
 			"[STATUS CODE] ..... " . $code . "\n" .

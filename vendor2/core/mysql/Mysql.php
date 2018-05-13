@@ -1,6 +1,6 @@
 <?php
 
-namespace fraemwork\mysql;
+namespace core\mysql;
 
 class Mysql extends MysqlConnect{
 	

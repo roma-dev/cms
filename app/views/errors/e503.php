@@ -27,7 +27,7 @@
 	
 	<div class="container">
 		<div class="bs-callout bs-callout-danger">
-			<h3 class="text-info"><?=$errstr?> <?=$code?></h3>
+			<h3 class="text-info"><?=$errstr?></h3>
 		</div>
 	</div>
 

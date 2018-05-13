@@ -1,22 +1,22 @@
 <?php
-
-use fraemwork\errors\ErrorsHandler;
-
 // устанавливаем московское время
 ini_set('date.timezone', 'Europe/Moscow');
 
 // определяем режим работы проекта
-defined('DEBUG') or define('DEBUG', true);
+defined('DEBUG') or define('DEBUG', false);
 // определяем корневую директорию проекта
 defined('ROOTDIR') or define('ROOTDIR', dirname(__DIR__));
 // директория приложения
 defined('APPDIR') or define('APPDIR', ROOTDIR . '/app');
 
 // файл конфигурации
-$config = require_once APPDIR . '/config/config.php';
+$config = require APPDIR . '/config/config.php';
 
 // инициализируем автозагрузчик классов
-require_once ROOTDIR . '/vendor/fraemwork/autoload.php';
+require_once ROOTDIR . '/vendor2/core/autoload/Autoload.php';
 
-// запускаем обработчик ошибок
-ErrorsHandler::handler($config['errorHandler']);
+// регистрируем автозагрузчик
+Autoload::register();
+
+// регистируем обработчик ошибок
+core\errors\ErrorsHandler::register($config['errorHandler']);
