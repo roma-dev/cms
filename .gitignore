@@ -1,3 +1,4 @@
 # folder logs
 /app/logs
 /nbproject/*
+/.idea/*
