@@ -24,8 +24,8 @@ class Router {
 			
 			if ($route == $alias) {
 				
-				$returnArray['controller']  = ucfirst($routeParams['controller']);
-				$returnArray['action']		= $routeParams['action'];
+				$returnArray['controller']  = ucfirst($routeParams['controller']) . 'Controller';
+				$returnArray['action']		= 'action' . ucfirst($routeParams['action']);
 				$returnArray['alias']		= $alias;
 				$returnArray['params']		= self::getRequestParams();
 				
