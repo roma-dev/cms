@@ -46,5 +46,6 @@ return [
 		'/' => ['controller' => 'main', 'action' => 'index'],
 		'/contacts' => ['controller' => 'main', 'action' => 'contacts'],
 	],
+    'controllersNamespace' => 'app\\controllers\\',
 	
 ];
