@@ -38,8 +38,8 @@ return [
 	'autoloadListFolder' => 
 	[
 		'app' => '/',
-		'core' => '/vendor2/',
-		'libs' => '/vendor2/',
+		'core' => '/vendor/',
+		'libs' => '/vendor/',
 	],
 	'routes' => 
 	[

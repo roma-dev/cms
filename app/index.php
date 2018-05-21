@@ -13,7 +13,7 @@ defined('APPDIR') or define('APPDIR', ROOTDIR . '/app');
 $config = require APPDIR . '/config/config.php';
 
 // инициализируем автозагрузчик классов
-require_once ROOTDIR . '/vendor2/core/autoload/Autoload.php';
+require_once ROOTDIR . '/vendor/core/autoload/Autoload.php';
 
 // регистрируем автозагрузчик
 Autoload::register();
