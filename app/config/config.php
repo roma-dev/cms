@@ -24,14 +24,16 @@ return [
 	[
 		'driver'	=> 'mysql',
 		'host'		=> '127.0.0.1',
+        'port'      => '3306',
 		'dbname'	=> 'pdotest',
 		'user'		=> 'root',
 		'password'	=> '123456',
 		'charset'	=> 'utf8',
 		'options'	=> 
 		[
-			PDO::ATTR_PERSISTENT	=> false, // отключаем сохранение постоянного соединения
-			PDO::ATTR_ERRMODE		=> PDO::ERRMODE_EXCEPTION, // включаем режим при котором PDO будет выбрасывать все исключения
+			PDO::ATTR_PERSISTENT	     => false,                  // отключаем сохранение постоянного соединения
+			PDO::ATTR_ERRMODE		     => PDO::ERRMODE_EXCEPTION, // включаем режим при котором PDO будет выбрасывать все исключения
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC        // выборка будет происходит в виде асс. массива
 		],
 	],
 	

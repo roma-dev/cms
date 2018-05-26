@@ -2,34 +2,37 @@
 
 namespace core\mysql;
 
-class MysqlConnect {
-	
-	/**
-	 *
-	 * @var type MysqlConnect
-	 */
-	protected $connect;
+
+/**
+ * Класс для создания соединения с базой данных
+ *
+ * Class MysqlConnect
+ * @package core\mysql
+ */
+
+class MysqlConnect{
+
+    /** @var object PDO */
+    private $pdo;
+
 
 	/**
 	 * Singleton methods
 	 * 
-	 * @param type $config $config['db']
-	 * @return type MysqlConnect 
+	 * @param array $config $config['db']
+	 * @return object \PDO
 	 */
-	protected function connect($config)
-	{
-		if (null === $this->connect)
-		{
-			$this->connect = new \PDO(
-				$config['driver'] . 
-				":host=" . $config['host'] . 
-				";dbname=" . $config['dbname'] .
-				";charset=" . $config['charset'] ,
-				$config['user'],
-				$config['password'],
-				$config['options']
-			);
+	protected function connect($config){
+
+        if (null === $this->pdo) {
+
+            $dsn = $config['driver']
+                . ':host=' . $config['host']
+                . ';port=' . $config['port']
+                . ';dbname=' . $config['dbname']
+                . ';charset=' . $config['charset'];
+
+            $this->connect = new \PDO($dsn, $config['user'], $config['password'], $config['options']);
 		}
-		return $this->connect;
 	}
 }
