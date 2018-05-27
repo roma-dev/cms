@@ -27,6 +27,6 @@ ErrorsHandler::register($config['errorHandler']);
 
 App::init($config);
 
-App::$object->routers = core\router\Router::parse($config['routes']);
+App::$app->routers = core\router\Router::parse($config['routes']);
 
-App::$object->goAction();
+App::$app->goAction();

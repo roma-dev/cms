@@ -10,17 +10,18 @@ namespace core\mysql;
  * @package core\mysql
  */
 
-class MysqlConnect{
+class MysqlConnect extends SelectSqlBuilder{
 
-    /** @var object PDO */
-    private $pdo;
+    /** @var \PDO */
+    protected $pdo;
 
+    /** @var \PDOStatement */
+    protected $stmt;
 
 	/**
 	 * Singleton methods
 	 * 
-	 * @param array $config $config['db']
-	 * @return object \PDO
+	 * @param array $config['db']
 	 */
 	protected function connect($config){
 
@@ -32,7 +33,7 @@ class MysqlConnect{
                 . ';dbname=' . $config['dbname']
                 . ';charset=' . $config['charset'];
 
-            $this->connect = new \PDO($dsn, $config['user'], $config['password'], $config['options']);
+            $this->pdo = new \PDO($dsn, $config['user'], $config['password'], $config['options']);
 		}
 	}
 }

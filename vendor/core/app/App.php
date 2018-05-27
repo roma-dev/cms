@@ -10,8 +10,11 @@ namespace core\app;
 
 class App{
 
-    /** @var object $this */
-    public static $object;
+    /** @var $this */
+    public static $app;
+
+    /** @var Mysql */
+    public static $db;
 
     /** @var array контейнер объектов приложения */
     private $container = [];
@@ -24,13 +27,13 @@ class App{
      */
     public static function init($config){
 
-        if (null === self::$object) {
+        if (null === self::$app) {
 
-            self::$object = new self();
-            self::$object->container['config'] = $config;
+            self::$app = new self();
+            self::$app->container['config'] = $config;
         }
 
-        return self::$object;
+        return self::$app;
     }
 
     /**
@@ -42,7 +45,7 @@ class App{
      */
     public function __set($name, $value) {
 
-        self::$object->container[$name] = $value;
+        self::$app->container[$name] = $value;
     }
 
     /**
@@ -53,7 +56,7 @@ class App{
      */
     public function __get($name) {
 
-        return self::$object->container[$name];
+        return self::$app->container[$name];
     }
 
 
@@ -64,15 +67,15 @@ class App{
      */
     public function goAction() {
 
-        if (self::$object->container['routers']) {
+        if (self::$app->container['routers']) {
 
-            $controller = self::$object->container['config']['controllersNamespace'] . self::$object->container['routers']['controller'];
-            $action = self::$object->container['routers']['action'];
+            $controller = self::$app->container['config']['controllersNamespace'] . self::$app->container['routers']['controller'];
+            $action = self::$app->container['routers']['action'];
 
             // если по какой-то причине не произойдет вызов экшена то отдаем код сервера "Внутренняя ошибка сервера"
             if (call_user_func_array([new $controller(),  $action], []) === false) {
 
-                throw new Exception('Неправильно задан контроллер или экшен');
+                throw new \Exception('Неправильно задан контроллер или экшен');
             }
 
         }
