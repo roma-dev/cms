@@ -1,12 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: xeup
- * Date: 21.05.18
- * Time: 21:15
- */
 
 namespace core\app;
+
+
+use core\mysql\Mysql;
 
 class App{
 
@@ -31,6 +28,7 @@ class App{
 
             self::$app = new self();
             self::$app->container['config'] = $config;
+            self::$db = new Mysql($config['db']);
         }
 
         return self::$app;
