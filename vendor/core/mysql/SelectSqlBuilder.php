@@ -3,7 +3,7 @@
 namespace core\mysql;
 
 
-class SelectSqlBuilder extends SqlBuilder {
+class SelectSqlBuilder extends InsertIntoSqlBuilder {
 
     /**
      * Устанавливает статус запроса в SELECT

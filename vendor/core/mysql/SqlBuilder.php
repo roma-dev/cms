@@ -37,8 +37,8 @@ class SqlBuilder{
     public function getPreparePattern(){
         return $this->preparePattern;
     }
-
-    /**
+	
+	/**
      * Выводит значения sql-запроса
      * @return array
      */
@@ -53,21 +53,37 @@ class SqlBuilder{
      */
     public function go(){
 
-        $preparePattern = $this->getPreparePattern();
-        $prepareParams = $this->getPrepareParams();
+		if ($this->sqlValues['action'] == 'insert') { // если статус запроса вставка INSERT
+			
+			$preparePattern = $this->getPreparePattern();
+			
+			$preparePattern .= ' (' . $this->insertColumnsPattern . ') VALUES (' . $this->insertValuesPattern . ')';
+			
+		} else {
+			
+			$preparePattern = $this->getPreparePattern();
+		}
 
-        $this->stmt = $this->pdo->prepare($preparePattern);
+		$prepareParams = $this->getPrepareParams();
+		
+		$this->stmt = $this->pdo->prepare($preparePattern);
 
-        foreach ($prepareParams as $key => &$prepareParam) {
+        foreach ($prepareParams as $key => &$prepareParam) { // добавляем значения в подготовленный запрос
 
             $this->stmt->bindParam($key, $prepareParam);
         }
 
-        $this->stmt->execute();
 
-        $this->clearBuilder(); // очищаем контейнеры строителя
+		$result = $this->stmt->execute(); // если запрос не вставка то выведется количество затронутых строк
 
-        return $this->stmt->fetchAll();
+		if ($this->sqlValues['action'] == 'select') { // если статус запроса выборка
+		
+			$result = $this->stmt->fetchAll();
+		}
+		
+		$this->clearBuilder(); // очищаем контейнеры строителя
+		
+		return $result;
     }
 
     /**
@@ -78,6 +94,8 @@ class SqlBuilder{
         $this->sqlValues = [];
         $this->prepareParams = [];
         $this->preparePattern = '';
+		$this->insertColumnsPattern = '';
+		$this->insertValuesPattern = '';
     }
 
 }
