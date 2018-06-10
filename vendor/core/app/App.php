@@ -29,7 +29,8 @@ class App{
 
             self::$app = new self();
             self::$app->container['config'] = $config;
-			self::$app->routers = Router::parse($config['routes']);
+			self::$app->container['routers'] = Router::parse($config['routes']);
+			self::$app->container['defaultLayout'] = $config['defaultLayout'];
             self::$db = new Mysql($config['db']);
         }
 
@@ -69,19 +70,25 @@ class App{
 
         if (self::$app->container['routers']) {
 
-            $controller = self::$app->container['config']['controllersNamespace'] . self::$app->container['routers']['controller'];
-            $action = self::$app->container['routers']['action'];
+			$controllersNamespace = self::$app->container['config']['controllersNamespace'];
+		
+			$controller = ucfirst(self::$app->container['routers']['controller']) . 'Controller';
+			
+			$action = 'action' . ucfirst(self::$app->container['routers']['action']);
+			
+            $controllerClass = $controllersNamespace . $controller;
+			
+			$cont = new $controllerClass(
+					self::$app->container['routers'], 
+					self::$app->container['routers']['action'],
+					self::$app->container['defaultLayout']
+					);
+			
+			$cont->$action();
+			
+			$html = $cont->render();
 
-            // если по какой-то причине не произойдет вызов экшена то отдаем код сервера "Внутренняя ошибка сервера"
-            if (call_user_func_array([new $controller(),  $action], []) === false) {
-
-                throw new \Exception('Неправильно задан контроллер или экшен');
-            }
-
+			echo $html;
         }
     }
-
-    private function __construct(){}
-    private function __clone(){}
-
 }
