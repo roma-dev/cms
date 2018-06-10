@@ -49,5 +49,6 @@ return [
 		'/contacts' => ['controller' => 'main', 'action' => 'contacts'],
 	],
     'controllersNamespace' => 'app\\controllers\\',
+	'defaultLayout' => 'default',
 	
 ];
