@@ -2,7 +2,7 @@
 
 namespace core\mysql;
 
-class InsertIntoSqlBuilder extends SqlBuilder{
+class InsertIntoSqlBuilder extends UpdateSqlBuilder{
 	
 	/** @var String Для хранения паттерна колонок */
 	protected $insertColumnsPattern = '';
