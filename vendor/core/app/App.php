@@ -4,6 +4,7 @@ namespace core\app;
 
 
 use core\mysql\Mysql;
+use core\router\Router;
 
 class App{
 
@@ -28,6 +29,7 @@ class App{
 
             self::$app = new self();
             self::$app->container['config'] = $config;
+			self::$app->routers = Router::parse($config['routes']);
             self::$db = new Mysql($config['db']);
         }
 

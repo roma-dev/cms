@@ -1,8 +1,5 @@
 <?php
 
-use core\errors\ErrorsHandler;
-use core\app\App;
-
 // устанавливаем московское время
 ini_set('date.timezone', 'Europe/Moscow');
 
@@ -23,10 +20,8 @@ require_once ROOTDIR . '/vendor/core/autoload/Autoload.php';
 Autoload::register();
 
 // регистируем обработчик ошибок
-ErrorsHandler::register($config['errorHandler']);
+core\errors\ErrorsHandler::register($config['errorHandler']);
 
-App::init($config);
+core\app\App::init($config);
 
-App::$app->routers = core\router\Router::parse($config['routes']);
-
-App::$app->goAction();
+core\app\App::$app->goAction();
