@@ -3,7 +3,7 @@
 namespace core\mysql;
 
 
-class UpdateSqlBuilder extends SqlBuilder {
+class UpdateSqlBuilder extends DeleteSqlBuilder {
 	
 		/**
 	 * Устанавливает статус запроса в UPDATE
