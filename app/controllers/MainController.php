@@ -1,24 +1,14 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: xeup
- * Date: 21.05.18
- * Time: 22:07
- */
 
 namespace app\controllers;
 
 
-class MainController{
+class MainController extends App{
 
 
     public function actionIndex(){
-        echo 'home';
+	
+		$this->vars['title'] = 'Главная страница';
     }
-
-
-    public function actionContacts(){
-        echo 'contacts';
-    }
-
+	
 }
