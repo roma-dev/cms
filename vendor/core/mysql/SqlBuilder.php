@@ -20,7 +20,11 @@ class SqlBuilder{
     /** @var array Массив введенных в SQL значений */
     protected $sqlValues = [];
 
-    /**
+	/** @var Integer Количество строк затронутых последним запросом к бд */
+	protected $rowCount = 0;
+	
+	
+	/**
      * Выводит массив для подготовленного запроса
      *
      * @return array
@@ -46,6 +50,14 @@ class SqlBuilder{
         return $this->sqlValues;
     }
 
+	/**
+     * Выводит количество строк затронутых sql-запросом
+     * @return array
+     */
+    public function getRowCount(){
+        return $this->rowCount;
+    }
+	
     /**
      * Запускает отправку подготовленного запроса в бд и возвращает результат
      *
@@ -80,6 +92,8 @@ class SqlBuilder{
 		
 			$result = $this->stmt->fetchAll();
 		}
+		
+		$this->rowCount = $this->stmt->rowCount(); // количество строк
 		
 		$this->clearBuilder(); // очищаем контейнеры строителя
 		
