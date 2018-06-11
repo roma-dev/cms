@@ -78,16 +78,18 @@ class App{
 			
             $controllerClass = $controllersNamespace . $controller;
 			
-			$cont = new $controllerClass(
+			$currentController = new $controllerClass(
 					self::$app->container['routers'], 
 					self::$app->container['routers']['action'],
 					self::$app->container['defaultLayout']
-					);
+				);
 			
-			$cont->$action();
+			$currentController->$action();
 			
-			$html = $cont->render();
+			$view = $currentController->initView();
 
+			$html = $view->render();
+			
 			echo $html;
         }
     }
