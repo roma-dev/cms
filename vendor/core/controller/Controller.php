@@ -19,6 +19,12 @@ class Controller {
 	/** @var Array Переданные переменные из контроллера */
 	public $vars = [];
 	
+	/** @var Array Асс массив css файлов для вставки в шаблон */
+	public $cssFiles = [];
+
+	/** @var Array Асс. массив js файлов для вставки в шаблон */
+	public $jsFiles = [];
+
 	/**
 	 * 
 	 * @param String $view
@@ -40,8 +46,52 @@ class Controller {
 				$this->routers,
 				$this->view,
 				$this->layout,
-				$this->vars
+				$this->vars,
+				$this->cssFiles,
+				$this->jsFiles
 			);
+	}
+	
+	/**
+	 * Добавляет css файл для вставки в шаблон или вид
+	 * 
+	 * @param String $cssFile
+	 * @param String $block В каком блоке будет выводится файл
+	 * 
+	 * @return void
+	 */
+	public function addCssFile($cssFile, $block = 'head'){
+		
+		if (!is_string($cssFile)) {
+			throw new \Exception('Файл css задан не строкой');
+		}
+		
+		if (!is_string($block) || $block != 'head' && $block != 'footer') {
+			throw new \Exception('Блок вставки css файла задан некорректно.');
+		}
+		
+		$this->cssFiles[$block][] = $cssFile;
+	}
+
+	/**
+	 * Добавляет js файл для вставки в шаблон или вид
+	 * 
+	 * @param String $jsFile
+	 * @param String $block В каком блоке будет выводится файл
+	 * 
+	 * @return void
+	 */
+	public function addJsFile($jsFile, $block = 'head'){
+		
+		if (!is_string($jsFile)) {
+			throw new \Exception('Файл js задан не строкой');
+		}
+		
+		if (!is_string($block) || $block != 'head' && $block != 'footer') {
+			throw new \Exception('Блок вставки js файла задан некорректно.');
+		}
+		
+		$this->jsFiles[$block][] = $jsFile;
 	}
 	
 	/**

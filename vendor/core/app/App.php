@@ -86,7 +86,7 @@ class App{
 			
 			$currentController->$action();
 			
-			$view = $currentController->initView();
+			$view = $currentController->initView(self::$app->container['config']);
 
 			$html = $view->render();
 			

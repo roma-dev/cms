@@ -50,5 +50,7 @@ return [
 	],
     'controllersNamespace' => 'app\\controllers\\',
 	'defaultLayout' => 'default',
+	'defaultDirectoryCss' => 'public/css',
+	'defaultDirectoryJs' => 'public/js',
 	
 ];
