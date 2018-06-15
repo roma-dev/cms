@@ -91,6 +91,10 @@ class App{
 			$html = $view->render();
 			
 			echo $html;
+			
+			return;
         }
+		
+		throw new \Exception('Такой страницы не существует!', 404);
     }
 }
